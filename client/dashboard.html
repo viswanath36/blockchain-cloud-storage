@@ -109,7 +109,6 @@ th,td{
 <tbody id="fileTable"></tbody>
 </table>
 
-<!-- Preview Modal -->
 <div id="previewModal">
   <div id="modalBox">
     <button id="closeBtn" onclick="closePreview()">X</button>
@@ -118,6 +117,8 @@ th,td{
 </div>
 
 <script>
+const API_BASE = ""; // ✅ leave empty for same domain (Render)
+
 const token = localStorage.getItem("token");
 if(!token) location.href="login.html";
 
@@ -138,22 +139,26 @@ document.getElementById("uploadForm").onsubmit = async e => {
 
   if (!file) return alert("Select file");
 
-  if (file.size > 500 * 1024 * 1024)
-    return alert("Max upload size is 500MB");
+  if (file.size > 100 * 1024 * 1024)
+    return alert("Max upload size is 100MB");
 
   const fd = new FormData();
   fd.append("file", file);
 
-  msg.innerText = "Uploading...";
+  msg.innerText = "Uploading... please wait";
 
   try {
-    const res = await fetch("/api/files/upload", {
+    const res = await fetch(API_BASE + "/api/files/upload", {
       method: "POST",
       headers: { Authorization: "Bearer " + token },
       body: fd
     });
 
-    const data = await res.json();
+    const text = await res.text();
+
+    let data;
+    try { data = JSON.parse(text); }
+    catch { data = { message: text }; }
 
     if(res.status === 401){
       logout();
@@ -169,16 +174,18 @@ document.getElementById("uploadForm").onsubmit = async e => {
     fileInput.value = "";
     loadFiles();
 
-  } catch {
-    msg.innerText = "❌ Upload failed";
+  } catch (err){
+    console.error(err);
+    msg.innerText = "❌ Upload failed (server unreachable)";
   }
 };
 
 /* ================= LOAD FILES ================= */
 
 async function loadFiles(){
+  msg.innerText = "Loading files...";
   try{
-    const res = await fetch("/api/files/list",{
+    const res = await fetch(API_BASE + "/api/files/list",{
       headers:{Authorization:"Bearer "+token}
     });
 
@@ -191,8 +198,9 @@ async function loadFiles(){
     const table = document.getElementById("fileTable");
     table.innerHTML="";
 
-    if(!Array.isArray(files)){
-      table.innerHTML="<tr><td colspan='8'>No files found</td></tr>";
+    if(!files.length){
+      table.innerHTML="<tr><td colspan='8'>No files uploaded</td></tr>";
+      msg.innerText="";
       return;
     }
 
@@ -210,7 +218,9 @@ async function loadFiles(){
       </tr>`;
     });
 
-  }catch{
+    msg.innerText="";
+  }catch(err){
+    console.error(err);
     msg.innerText="Failed to load files";
   }
 }
@@ -231,7 +241,7 @@ function previewFile(hash, filename){
   else if(ext==="pdf")
     content.innerHTML=`<iframe src="${url}" width="100%" height="600"></iframe>`;
   else
-    content.innerHTML=`<a href="${url}" target="_blank">Preview not supported — Open file</a>`;
+    content.innerHTML=`<a href="${url}" target="_blank">Open file</a>`;
 
   modal.style.display="flex";
 }
@@ -243,7 +253,7 @@ function closePreview(){
 /* ================= DOWNLOAD ================= */
 
 async function downloadFile(hash) {
-  const res = await fetch(`/api/files/download/${hash}`, {
+  const res = await fetch(API_BASE + "/api/files/download/"+hash, {
     headers:{Authorization:"Bearer "+token}
   });
 
@@ -266,9 +276,7 @@ async function downloadFile(hash) {
   const a = document.createElement("a");
   a.href = url;
   a.download = filename;
-  document.body.appendChild(a);
   a.click();
-  a.remove();
 }
 
 /* ================= DELETE ================= */
@@ -276,7 +284,7 @@ async function downloadFile(hash) {
 async function deleteFile(hash){
   if(!confirm("Delete file?")) return;
 
-  const res = await fetch("/api/files/delete/"+hash,{
+  const res = await fetch(API_BASE + "/api/files/delete/"+hash,{
     method:"DELETE",
     headers:{Authorization:"Bearer "+token}
   });
