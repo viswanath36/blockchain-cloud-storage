@@ -25,38 +25,46 @@ router.post("/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    if (!name || !email || !password)
+    // ✅ Validate input
+    if (!name || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
+    }
 
+    // ✅ Check if email already exists
     const exists = await User.findOne({ email });
-    if (exists)
+    if (exists) {
       return res.status(400).json({ message: "Email already exists" });
+    }
 
+    // ✅ Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // generate authenticator secret
+    // ✅ Generate Google Authenticator secret
     const secret = speakeasy.generateSecret({
-      name: "BlockchainCloudStorage"
+      name: `BlockchainCloudStorage (${email})`
     });
 
+    // ✅ Create user
     const user = new User({
       name,
       email,
       password: hashedPassword,
-      otpSecret: secret.base32
+      otpSecret: secret.base32,
+      otpEnabled: true   // ⭐ ensures OTP is enforced
     });
 
-    await user.save();   // ✅ IMPORTANT
+    await user.save();
 
+    // ✅ Generate QR Code for Google Authenticator
     const qrCode = await QRCode.toDataURL(secret.otpauth_url);
 
-    res.json({
+    res.status(201).json({
       message: "Registered successfully",
       qrCode
     });
 
   } catch (err) {
-    console.error(err);
+    console.error("Register Error:", err);
     res.status(500).json({ message: "Registration failed" });
   }
 });

@@ -26,10 +26,8 @@ const UserSchema = new mongoose.Schema(
   },
 
   // 🔐 Google Authenticator secret
-  otpSecret: {
-    type: String,
-    default: null
-  },
+  otpSecret: String,
+  otpEnabled: { type: Boolean, default: false },
 
   // 👑 Role Based Access Control
   role: {
