@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>User Registration</title>
+  <style>
+    body{
+      margin:0;
+      height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      font-family:Arial;
+      background:linear-gradient(to right,#3b82f6,#2563eb);
+    }
+
+    .card{
+      background:#fff;
+      padding:35px;
+      width:360px;
+      border-radius:14px;
+      text-align:center;
+      box-shadow:0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    h2{ margin-bottom:20px; }
+
+    input{
+      width:100%;
+      padding:12px;
+      margin:10px 0;
+      border-radius:8px;
+      border:1px solid #ccc;
+    }
+
+    button{
+      width:100%;
+      padding:12px;
+      border:none;
+      border-radius:8px;
+      background:linear-gradient(to right,#3b82f6,#2563eb);
+      color:white;
+      font-size:16px;
+      cursor:pointer;
+      margin-top:10px;
+    }
+
+    button:disabled{
+      opacity:0.6;
+      cursor:not-allowed;
+    }
+
+    .msg{ margin-top:12px; font-weight:bold; }
+    .success{ color:green; }
+    .error{ color:red; }
+
+    img{
+      margin-top:15px;
+      border-radius:8px;
+    }
+
+    a{ text-decoration:none; color:#2563eb; font-weight:bold; }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <h2>User Registration</h2>
+
+  <form id="registerForm">
+    <!-- ✅ ADDED NAME FIELD -->
+    <input type="text" id="name" placeholder="Full Name" required>
+
+    <input type="email" id="email" placeholder="Email" required>
+    <input type="password" id="password" placeholder="Password" required>
+
+    <button id="registerBtn">Register</button>
+  </form>
+
+  <p id="msg" class="msg"></p>
+
+  <div id="qrBox"></div>
+
+  <p>Already registered? <a href="login.html">Login</a></p>
+</div>
+
+<script>
+document.getElementById("registerForm").onsubmit = async (e)=>{
+  e.preventDefault();
+
+  const btn = document.getElementById("registerBtn");
+  const msg = document.getElementById("msg");
+  const qrBox = document.getElementById("qrBox");
+
+  const name = document.getElementById("name").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+
+  if(!name || !email || !password){
+    msg.innerText = "All fields are required";
+    msg.className = "msg error";
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerText = "Registering...";
+
+  const res = await fetch("/api/auth/register",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({
+      name,
+      email,
+      password
+    })
+  });
+
+  const data = await res.json();
+
+  btn.disabled = false;
+  btn.innerText = "Register";
+
+  if(res.ok){
+    msg.innerText = "✅ Registered successfully";
+    msg.className = "msg success";
+
+    // ✅ show QR code
+    qrBox.innerHTML = `
+      <img src="${data.qrCode}" width="200">
+      <p>Scan using Google Authenticator</p>
+      <button onclick="goLogin()">Continue to Login</button>
+    `;
+  }else{
+    msg.innerText = data.message || "Registration failed";
+    msg.className = "msg error";
+  }
+};
+
+function goLogin(){
+  window.location="login.html";
+}
+</script>
+
+</body>
+</html>

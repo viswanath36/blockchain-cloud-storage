@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blockchain Cloud Storage</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    background: radial-gradient(circle at top, #08142e, #020617);
+    color:white;
+}
+
+/* NAVBAR */
+
+nav{
+    width:90%;
+    margin:auto;
+    margin-top:20px;
+    padding:15px 30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:rgba(255,255,255,0.05);
+    backdrop-filter: blur(12px);
+    border-radius:14px;
+}
+
+.logo{
+    font-weight:600;
+    font-size:20px;
+}
+
+.logo span{
+    color:#4da3ff;
+}
+
+.nav-right{
+    display:flex;
+    align-items:center;
+    gap:18px;
+}
+
+.nav-right div{
+    cursor:pointer;
+    opacity:0.85;
+}
+
+.signup{
+    padding:8px 18px;
+    border-radius:8px;
+    background:linear-gradient(90deg,#2aa9ff,#0066ff);
+    border:none;
+    color:white;
+    cursor:pointer;
+    box-shadow:0 0 12px rgba(0,153,255,0.5);
+}
+
+/* HERO */
+
+.hero{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    width:90%;
+    margin:80px auto;
+    gap:40px;
+}
+
+.hero-text{
+    max-width:520px;
+}
+
+.hero-text small{
+    letter-spacing:1px;
+    opacity:0.7;
+}
+
+.hero-text h1{
+    font-size:56px;
+    line-height:1.1;
+    margin:15px 0;
+}
+
+.hero-text span{
+    color:#7cc7ff;
+}
+
+.hero-text p{
+    opacity:0.7;
+    margin-top:25px;
+    line-height:1.6;
+}
+
+/* CLOUD SVG */
+
+.scene{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.cloud-svg{
+    width:300px;
+    animation: float 5s ease-in-out infinite;
+}
+
+/* floating animation */
+@keyframes float{
+    0%,100%{ transform: translateY(0); }
+    50%{ transform: translateY(-14px); }
+}
+
+/* arrow animation */
+.arrow{
+    animation: arrowMove 2s infinite ease-in-out;
+}
+
+.arrow.down{
+    animation-delay: 1s;
+}
+
+@keyframes arrowMove{
+    0%{ transform: translateY(0); opacity:0.4; }
+    50%{ transform: translateY(-10px); opacity:1; }
+    100%{ transform: translateY(0); opacity:0.4; }
+}
+
+/* data flow dots */
+.dot{
+    opacity:0;
+    animation: dataFlow 2s infinite;
+}
+
+.dot.delay1{ animation-delay:0.4s; }
+.dot.delay2{ animation-delay:0.8s; }
+
+@keyframes dataFlow{
+    0%{ opacity:0; transform: translateY(10px);}
+    50%{ opacity:1;}
+    100%{ opacity:0; transform: translateY(-20px);}
+}
+
+/* MOBILE */
+
+@media(max-width:900px){
+.hero{
+    flex-direction:column;
+    text-align:center;
+}
+.cloud-svg{
+    width:220px;
+}
+}
+</style>
+</head>
+<body>
+
+<nav>
+    <div class="logo">Blockchain <span>Cloud</span> Storage</div>
+    <div class="nav-right">
+        <div onclick="location.href='login.html'">Login</div>
+        <button class="signup" onclick="location.href='register.html'">Sign Up</button>
+    </div>
+</nav>
+
+<section class="hero">
+
+    <div class="hero-text">
+        <small>ALL IN ONE CLOUD</small>
+        <h1>Secure <span>Cloud</span><br>Storage<br>for All Your Files</h1>
+        <p>Documents, photos, videos and more — keep all your files and folders safe in online cloud storage.</p>
+    </div>
+
+    <div class="scene">
+        <svg class="cloud-svg" viewBox="0 0 512 512">
+
+            <defs>
+                <linearGradient id="cloudGrad" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#d9f2ff"/>
+                    <stop offset="100%" stop-color="#9ad8ff"/>
+                </linearGradient>
+
+                <linearGradient id="arrowGrad" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#2aa9ff"/>
+                    <stop offset="100%" stop-color="#005eff"/>
+                </linearGradient>
+
+                <filter id="glow">
+                    <feDropShadow dx="0" dy="0" stdDeviation="10" flood-color="#00aaff"/>
+                </filter>
+            </defs>
+
+            <!-- cloud -->
+            <path
+              d="M380 300H150a90 90 0 1 1 20-177 120 120 0 0 1 230 37 75 75 0 0 1 -20 140z"
+              fill="url(#cloudGrad)"
+              filter="url(#glow)"
+            />
+
+            <!-- up arrow -->
+            <path class="arrow up"
+              d="M240 210 L240 290 M240 210 L210 240 M240 210 L270 240"
+              stroke="url(#arrowGrad)"
+              stroke-width="14"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              fill="none"/>
+
+            <!-- down arrow -->
+            <path class="arrow down"
+              d="M290 270 L290 350 M290 350 L260 320 M290 350 L320 320"
+              stroke="url(#arrowGrad)"
+              stroke-width="14"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              fill="none"/>
+
+            <!-- data flow dots -->
+            <circle class="dot" cx="210" cy="320" r="6" fill="#2aa9ff"/>
+            <circle class="dot delay1" cx="240" cy="350" r="6" fill="#2aa9ff"/>
+            <circle class="dot delay2" cx="270" cy="380" r="6" fill="#2aa9ff"/>
+
+        </svg>
+    </div>
+
+</section>
+
+</body>
+</html>

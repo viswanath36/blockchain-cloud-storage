@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Reset Password</title>
+</head>
+<body style="font-family:Arial;text-align:center;margin-top:100px">
+
+<h2>Reset Password</h2>
+
+<input id="email" placeholder="Enter email" type="email">
+<br><br>
+<button onclick="sendReset()">Send OTP</button>
+
+<p id="msg" style="margin-top:15px;font-weight:bold;"></p>
+
+<script>
+async function sendReset() {
+  const email = document.getElementById("email").value.trim();
+  const msg = document.getElementById("msg");
+
+  // ✅ validate email
+  if (!email) {
+    msg.innerText = "Please enter your email";
+    msg.style.color = "red";
+    return;
+  }
+
+  try {
+    const res = await fetch("/api/auth/forgot", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email })
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      msg.innerText = "✅ OTP sent to your email";
+      msg.style.color = "green";
+
+      // ✅ save email for next page
+      localStorage.setItem("resetEmail", email);
+
+      // ✅ redirect to OTP reset page
+      setTimeout(() => {
+        window.location.href = "reset.html";
+      }, 1200);
+
+    } else {
+      msg.innerText = data.message || "Error sending OTP";
+      msg.style.color = "red";
+    }
+
+  } catch (err) {
+    msg.innerText = "Server error. Try again.";
+    msg.style.color = "red";
+  }
+}
+</script>
+
+</body>
+</html>

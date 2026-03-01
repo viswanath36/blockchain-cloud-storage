@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Dashboard</title>
+
+<style>
+body{
+  font-family: Arial;
+  background:#f4f6f9;
+  margin:0;
+  padding:20px;
+}
+
+.topbar{
+  display:flex;
+  justify-content:flex-end;
+  margin-bottom:20px;
+}
+
+button{
+  padding:8px 14px;
+  border-radius:6px;
+  border:none;
+  cursor:pointer;
+  margin:2px;
+  color:white;
+}
+
+.upload-btn{background:#2e86de;}
+.preview-btn{background:#8e44ad;}
+.download-btn{background:#27ae60;}
+.delete-btn{background:#e74c3c;}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:15px;
+  background:white;
+}
+th,td{
+  border:1px solid #ccc;
+  padding:10px;
+  text-align:center;
+}
+
+#previewModal{
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.7);
+  justify-content:center;
+  align-items:center;
+}
+
+#modalBox{
+  background:white;
+  padding:15px;
+  border-radius:8px;
+  max-width:90%;
+  max-height:90%;
+  overflow:auto;
+}
+
+#closeBtn{
+  float:right;
+  background:red;
+  color:white;
+  border:none;
+  cursor:pointer;
+  padding:5px 10px;
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button onclick="logout()" style="background:#e74c3c">Logout</button>
+</div>
+
+<h2>Upload Secure File</h2>
+
+<form id="uploadForm">
+  <input type="file" id="file" required>
+  <button class="upload-btn">Upload</button>
+</form>
+
+<p id="msg"></p>
+
+<h3>Uploaded Files</h3>
+
+<input type="text" id="search" placeholder="Search files..." onkeyup="filterFiles()">
+
+<table>
+<thead>
+<tr>
+<th>File Name</th>
+<th>Owner</th>
+<th>Hash</th>
+<th>Downloads</th>
+<th>Date</th>
+<th>Preview</th>
+<th>Download</th>
+<th>Delete</th>
+</tr>
+</thead>
+<tbody id="fileTable"></tbody>
+</table>
+
+<!-- Preview Modal -->
+<div id="previewModal">
+  <div id="modalBox">
+    <button id="closeBtn" onclick="closePreview()">X</button>
+    <div id="previewContent"></div>
+  </div>
+</div>
+
+<script>
+const token = localStorage.getItem("token");
+if(!token) location.href="login.html";
+
+const msg = document.getElementById("msg");
+
+function logout(){
+  localStorage.removeItem("token");
+  location.href="login.html";
+}
+
+/* ================= UPLOAD ================= */
+
+document.getElementById("uploadForm").onsubmit = async e => {
+  e.preventDefault();
+
+  const fileInput = document.getElementById("file");
+  const file = fileInput.files[0];
+
+  if (!file) return alert("Select file");
+
+  if (file.size > 500 * 1024 * 1024)
+    return alert("Max upload size is 500MB");
+
+  const fd = new FormData();
+  fd.append("file", file);
+
+  msg.innerText = "Uploading...";
+
+  try {
+    const res = await fetch("/api/files/upload", {
+      method: "POST",
+      headers: { Authorization: "Bearer " + token },
+      body: fd
+    });
+
+    const data = await res.json();
+
+    if(res.status === 401){
+      logout();
+      return;
+    }
+
+    if (!res.ok){
+      msg.innerText = data.message || "Upload failed";
+      return;
+    }
+
+    msg.innerText = "✅ Upload successful";
+    fileInput.value = "";
+    loadFiles();
+
+  } catch {
+    msg.innerText = "❌ Upload failed";
+  }
+};
+
+/* ================= LOAD FILES ================= */
+
+async function loadFiles(){
+  try{
+    const res = await fetch("/api/files/list",{
+      headers:{Authorization:"Bearer "+token}
+    });
+
+    if(res.status === 401){
+      logout();
+      return;
+    }
+
+    const files = await res.json();
+    const table = document.getElementById("fileTable");
+    table.innerHTML="";
+
+    if(!Array.isArray(files)){
+      table.innerHTML="<tr><td colspan='8'>No files found</td></tr>";
+      return;
+    }
+
+    files.forEach(f=>{
+      table.innerHTML += `
+      <tr>
+        <td>${f.originalName}</td>
+        <td>${f.owner?.email || "You"}</td>
+        <td>${f.ipfsHash}</td>
+        <td>${f.downloadsLeft}</td>
+        <td>${new Date(f.uploadedAt).toLocaleString()}</td>
+        <td><button class="preview-btn" onclick="previewFile('${f.ipfsHash}','${f.originalName}')">Preview</button></td>
+        <td><button class="download-btn" onclick="downloadFile('${f.ipfsHash}')">Download</button></td>
+        <td><button class="delete-btn" onclick="deleteFile('${f.ipfsHash}')">Delete</button></td>
+      </tr>`;
+    });
+
+  }catch{
+    msg.innerText="Failed to load files";
+  }
+}
+
+/* ================= PREVIEW ================= */
+
+function previewFile(hash, filename){
+  const modal=document.getElementById("previewModal");
+  const content=document.getElementById("previewContent");
+
+  const url="https://ipfs.io/ipfs/"+hash;
+  const ext=filename.split('.').pop().toLowerCase();
+
+  content.innerHTML="";
+
+  if(["jpg","jpeg","png","gif","webp"].includes(ext))
+    content.innerHTML=`<img src="${url}" style="max-width:100%">`;
+  else if(ext==="pdf")
+    content.innerHTML=`<iframe src="${url}" width="100%" height="600"></iframe>`;
+  else
+    content.innerHTML=`<a href="${url}" target="_blank">Preview not supported — Open file</a>`;
+
+  modal.style.display="flex";
+}
+
+function closePreview(){
+  document.getElementById("previewModal").style.display="none";
+}
+
+/* ================= DOWNLOAD ================= */
+
+async function downloadFile(hash) {
+  const res = await fetch(`/api/files/download/${hash}`, {
+    headers:{Authorization:"Bearer "+token}
+  });
+
+  if(res.status === 401){
+    logout();
+    return;
+  }
+
+  if (!res.ok) return alert("Download failed");
+
+  const blob = await res.blob();
+
+  let filename = "download";
+  const disposition = res.headers.get("Content-Disposition");
+
+  if (disposition && disposition.includes("filename="))
+    filename = disposition.split("filename=")[1].replace(/"/g,"");
+
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
+/* ================= DELETE ================= */
+
+async function deleteFile(hash){
+  if(!confirm("Delete file?")) return;
+
+  const res = await fetch("/api/files/delete/"+hash,{
+    method:"DELETE",
+    headers:{Authorization:"Bearer "+token}
+  });
+
+  if(res.status === 401){
+    logout();
+    return;
+  }
+
+  alert("Deleted");
+  loadFiles();
+}
+
+/* ================= SEARCH ================= */
+
+function filterFiles(){
+  const val=document.getElementById("search").value.toLowerCase();
+  document.querySelectorAll("#fileTable tr").forEach(row=>{
+    row.style.display=row.innerText.toLowerCase().includes(val)?"":"none";
+  });
+}
+
+loadFiles();
+</script>
+</body>
+</html>

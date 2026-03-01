@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Reset Password</title>
+</head>
+<body style="font-family:Arial;text-align:center;margin-top:100px">
+
+<h2>Reset Password</h2>
+
+<input id="otp" placeholder="Enter OTP">
+<br><br>
+
+<input id="password" type="password" placeholder="New Password">
+<br><br>
+
+<button onclick="resetPassword()">Reset Password</button>
+
+<p id="msg" style="margin-top:15px;font-weight:bold;"></p>
+
+<script>
+async function resetPassword() {
+  const otp = document.getElementById("otp").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const email = localStorage.getItem("resetEmail");
+  const msg = document.getElementById("msg");
+
+  if (!otp || !password) {
+    msg.innerText = "Enter OTP & new password";
+    msg.style.color = "red";
+    return;
+  }
+
+  try {
+    const res = await fetch("/api/auth/reset", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, otp, password })
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      msg.innerText = "✅ Password reset successful";
+      msg.style.color = "green";
+
+      localStorage.removeItem("resetEmail");
+
+      setTimeout(() => {
+        window.location.href = "login.html";
+      }, 1500);
+
+    } else {
+      msg.innerText = data.message || "Reset failed";
+      msg.style.color = "red";
+    }
+
+  } catch (err) {
+    msg.innerText = "Server error";
+    msg.style.color = "red";
+  }
+}
+</script>
+
+</body>
+</html>
