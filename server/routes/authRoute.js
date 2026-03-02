@@ -226,4 +226,8 @@ router.post("/reset", async (req, res) => {
     console.error("Reset Error:", err);
     res.status(500).json({ message: "Reset failed" });
   }
+
+  
 });
+
+module.exports = router;
