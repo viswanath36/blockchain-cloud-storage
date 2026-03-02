@@ -1,3 +1,4 @@
+require('dns').setDefaultResultOrder('ipv4first'); 
 const path = require("path");
 const express = require("express");
 const mongoose = require("mongoose");
@@ -48,9 +49,6 @@ app.use((req, res) => {
 // ===============================
 // ✅ MONGODB CONNECTION
 // ===============================
-// ================================
-// ✅ MONGODB CONNECTION
-// ================================
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB Connected"))
