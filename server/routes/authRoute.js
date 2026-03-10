@@ -25,42 +25,38 @@ router.post("/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    // ✅ Validate input
     if (!name || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    // ✅ Check if email already exists
     const exists = await User.findOne({ email });
     if (exists) {
       return res.status(400).json({ message: "Email already exists" });
     }
 
-    // ✅ Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // ✅ Generate Google Authenticator secret
     const secret = speakeasy.generateSecret({
-      name: `BlockchainCloudStorage (${email})`
+      name: `BlockchainCloudStorage (${email})`,
+      length: 20
     });
 
-    // ✅ Create user
     const user = new User({
       name,
       email,
       password: hashedPassword,
       otpSecret: secret.base32,
-      otpEnabled: true   // ⭐ ensures OTP is enforced
+      otpEnabled: true
     });
 
     await user.save();
 
-    // ✅ Generate QR Code for Google Authenticator
     const qrCode = await QRCode.toDataURL(secret.otpauth_url);
 
     res.status(201).json({
       message: "Registered successfully",
-      qrCode
+      qrCode,
+      manualKey: secret.base32
     });
 
   } catch (err) {
@@ -75,18 +71,16 @@ router.post("/login", async (req, res) => {
   try {
     const { email, password, otp } = req.body;
 
-    // ✅ find user
     const user = await User.findOne({ email });
     if (!user)
       return res.status(401).json({ message: "Invalid email or password" });
 
-    // ✅ verify password
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword)
       return res.status(401).json({ message: "Invalid email or password" });
 
-    // ✅ verify OTP only if secret exists
-    if (user.otpSecret) {
+    // ✅ OTP verification only if enabled
+    if (user.otpEnabled && user.otpSecret) {
 
       if (!otp)
         return res.status(401).json({ message: "OTP required" });
@@ -95,17 +89,16 @@ router.post("/login", async (req, res) => {
         secret: user.otpSecret,
         encoding: "base32",
         token: otp,
-        window: 1   // handles time delay
+        window: 1
       });
 
       if (!verified)
         return res.status(401).json({ message: "Invalid OTP" });
     }
 
-    // ✅ create JWT token
     const token = jwt.sign(
       { id: user._id, role: user.role },
-      process.env.JWT_SECRET,   // ⭐ important
+      process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
 
@@ -130,27 +123,23 @@ router.post("/forgot", async (req, res) => {
 
     const user = await User.findOne({ email });
 
-    // ✅ security: don't reveal if user exists
     if (!user) {
       return res.json({ message: "If this email exists, OTP was sent" });
     }
 
-    // ✅ prevent OTP spam (allow new OTP after 60 sec)
     if (user.resetOTPExpire && user.resetOTPExpire > Date.now() - 60000) {
       return res.status(429).json({
         message: "Please wait before requesting another OTP"
       });
     }
 
-    // ✅ generate 6 digit OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
     user.resetOTP = otp;
-    user.resetOTPExpire = Date.now() + 10 * 60 * 1000; // 10 minutes
+    user.resetOTPExpire = Date.now() + 10 * 60 * 1000;
 
     await user.save();
 
-    // ✅ send email
     await transporter.sendMail({
       to: email,
       subject: "Password Reset OTP",
@@ -180,7 +169,6 @@ router.post("/reset", async (req, res) => {
       return res.status(400).json({ message: "All fields required" });
     }
 
-    // ✅ optional: password strength check
     if (password.length < 6) {
       return res.status(400).json({
         message: "Password must be at least 6 characters"
@@ -189,32 +177,25 @@ router.post("/reset", async (req, res) => {
 
     const user = await User.findOne({ email });
 
-    // ✅ security: avoid email enumeration
     if (!user) {
       return res.json({ message: "If details are correct, password updated" });
     }
 
-    // ✅ ensure OTP exists
     if (!user.resetOTP || !user.resetOTPExpire) {
       return res.status(400).json({ message: "OTP not requested" });
     }
 
-    // ✅ check expiry
     if (user.resetOTPExpire < Date.now()) {
       return res.status(400).json({ message: "OTP expired" });
     }
 
-    // ✅ compare as string
     if (String(user.resetOTP) !== String(otp)) {
       return res.status(400).json({ message: "Invalid OTP" });
     }
 
-    // ✅ hash new password
-    const bcrypt = require("bcryptjs");
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(password, salt);
 
-    // ✅ clear OTP fields
     user.resetOTP = undefined;
     user.resetOTPExpire = undefined;
 
@@ -226,8 +207,6 @@ router.post("/reset", async (req, res) => {
     console.error("Reset Error:", err);
     res.status(500).json({ message: "Reset failed" });
   }
-
-  
 });
 
 module.exports = router;

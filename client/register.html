@@ -16,7 +16,7 @@
     .card{
       background:#fff;
       padding:35px;
-      width:360px;
+      width:380px;
       border-radius:14px;
       text-align:center;
       box-shadow:0 10px 30px rgba(0,0,0,0.2);
@@ -58,6 +58,20 @@
       border-radius:8px;
     }
 
+    .manual-key{
+      margin-top:10px;
+      background:#f3f4f6;
+      padding:10px;
+      border-radius:6px;
+      font-size:14px;
+      word-break:break-all;
+    }
+
+    .copy-btn{
+      background:#10b981;
+      margin-top:8px;
+    }
+
     a{ text-decoration:none; color:#2563eb; font-weight:bold; }
   </style>
 </head>
@@ -67,12 +81,9 @@
   <h2>User Registration</h2>
 
   <form id="registerForm">
-    <!-- ✅ ADDED NAME FIELD -->
     <input type="text" id="name" placeholder="Full Name" required>
-
     <input type="email" id="email" placeholder="Email" required>
     <input type="password" id="password" placeholder="Password" required>
-
     <button id="registerBtn">Register</button>
   </form>
 
@@ -104,36 +115,51 @@ document.getElementById("registerForm").onsubmit = async (e)=>{
   btn.disabled = true;
   btn.innerText = "Registering...";
 
-  const res = await fetch("/api/auth/register",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({
-      name,
-      email,
-      password
-    })
-  });
+  try {
+    const res = await fetch("/api/auth/register",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ name, email, password })
+    });
 
-  const data = await res.json();
+    const data = await res.json();
 
-  btn.disabled = false;
-  btn.innerText = "Register";
+    btn.disabled = false;
+    btn.innerText = "Register";
 
-  if(res.ok){
-    msg.innerText = "✅ Registered successfully";
-    msg.className = "msg success";
+    if(res.ok){
+      msg.innerText = "✅ Registered successfully";
+      msg.className = "msg success";
 
-    // ✅ show QR code
-    qrBox.innerHTML = `
-      <img src="${data.qrCode}" width="200">
-      <p>Scan using Google Authenticator</p>
-      <button onclick="goLogin()">Continue to Login</button>
-    `;
-  }else{
-    msg.innerText = data.message || "Registration failed";
+      // ✅ Show QR + Manual Key
+      qrBox.innerHTML = `
+        <img src="${data.qrCode}" width="200">
+        <p><b>Scan using Google Authenticator</b></p>
+
+        <p><b>OR Enter Manual Key:</b></p>
+        <div class="manual-key" id="manualKey">${data.manualKey}</div>
+        <button class="copy-btn" onclick="copyKey()">Copy Key</button>
+
+        <button onclick="goLogin()">Continue to Login</button>
+      `;
+    }else{
+      msg.innerText = data.message || "Registration failed";
+      msg.className = "msg error";
+    }
+
+  } catch(err){
+    btn.disabled = false;
+    btn.innerText = "Register";
+    msg.innerText = "Server error";
     msg.className = "msg error";
   }
 };
+
+function copyKey(){
+  const text = document.getElementById("manualKey").innerText;
+  navigator.clipboard.writeText(text);
+  alert("Secret key copied!");
+}
 
 function goLogin(){
   window.location="login.html";
