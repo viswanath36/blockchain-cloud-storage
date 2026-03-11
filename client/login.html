@@ -1,127 +1,227 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Secure Login</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Secure Login — BlockChain Storage</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+
 body{
-  margin:0;
-  font-family: Arial, sans-serif;
-  height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  background: linear-gradient(135deg,#1e3c72,#2a5298);
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:#020817;color:white;overflow:hidden;
+  background-image:
+    radial-gradient(ellipse 80% 60% at 20% 0%,rgba(0,212,255,0.12) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 100%,rgba(124,58,237,0.12) 0%,transparent 60%);
 }
 
-.login-box{
-  background:white;
-  padding:35px;
-  width:350px;
-  border-radius:10px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.2);
-  text-align:center;
+canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
+
+.grid-bg{
+  position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;
+  background-image:
+    linear-gradient(rgba(0,212,255,0.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,212,255,0.03) 1px,transparent 1px);
+  background-size:60px 60px;pointer-events:none;
 }
 
-input{
-  width:100%;
-  padding:12px;
-  margin:10px 0;
-  border-radius:5px;
-  border:1px solid #ccc;
+/* CARD */
+.card{
+  position:relative;z-index:10;
+  width:420px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:24px;
+  padding:44px 40px;
+  backdrop-filter:blur(24px);
+  box-shadow:
+    0 32px 80px rgba(0,0,0,0.6),
+    0 0 0 1px rgba(255,255,255,0.04) inset,
+    0 1px 0 rgba(255,255,255,0.1) inset;
+  animation:cardIn 0.7s cubic-bezier(0.16,1,0.3,1) forwards;
 }
 
-button{
-  width:100%;
-  padding:12px;
-  border:none;
-  background:#2a6edb;
-  color:white;
-  border-radius:6px;
-  font-size:16px;
-  cursor:pointer;
+@keyframes cardIn{
+  from{opacity:0;transform:translateY(40px) scale(0.96);}
+  to{opacity:1;transform:translateY(0) scale(1);}
 }
 
-button:hover{
-  background:#1f56b5;
+/* Glowing top border */
+.card::before{
+  content:'';position:absolute;top:0;left:10%;right:10%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,212,255,0.6),transparent);
+  border-radius:100px;
 }
 
-.link{
-  margin-top:10px;
-  display:block;
-  color:#2a6edb;
-  cursor:pointer;
-  text-decoration:none;
+/* LOGO */
+.logo-mark{
+  width:52px;height:52px;border-radius:14px;
+  background:linear-gradient(135deg,rgba(0,212,255,0.2),rgba(124,58,237,0.2));
+  border:1px solid rgba(0,212,255,0.3);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 20px;font-size:24px;
 }
 
+.card-title{text-align:center;margin-bottom:8px;}
+.card-title h2{font-size:24px;font-weight:800;letter-spacing:-0.5px;}
+.card-title p{font-size:14px;color:rgba(255,255,255,0.45);margin-top:6px;}
+
+/* INPUT GROUP */
+.input-group{margin-top:28px;display:flex;flex-direction:column;gap:14px;}
+
+.field{display:flex;flex-direction:column;gap:6px;}
+.field label{font-size:12px;font-weight:600;color:rgba(255,255,255,0.55);letter-spacing:0.5px;text-transform:uppercase;}
+
+.field input{
+  padding:13px 16px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:12px;color:white;font-size:15px;
+  transition:all 0.3s;outline:none;
+  -webkit-text-fill-color:white;
+}
+.field input::placeholder{color:rgba(255,255,255,0.25);}
+.field input:focus{
+  border-color:rgba(0,212,255,0.5);
+  background:rgba(0,212,255,0.06);
+  box-shadow:0 0 0 3px rgba(0,212,255,0.1);
+}
+
+/* OTP optional */
+.otp-note{font-size:11px;color:rgba(255,255,255,0.3);margin-top:2px;}
+
+/* BUTTON */
+.btn-submit{
+  width:100%;padding:14px;margin-top:8px;border:none;cursor:pointer;
+  background:linear-gradient(135deg,#00d4ff,#7c3aed);
+  color:white;font-size:15px;font-weight:700;border-radius:12px;
+  box-shadow:0 4px 24px rgba(0,212,255,0.3);
+  transition:all 0.3s;letter-spacing:0.3px;
+  position:relative;overflow:hidden;
+}
+.btn-submit::after{
+  content:'';position:absolute;top:-50%;left:-60%;
+  width:200%;height:200%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent);
+  transform:skewX(-20deg);
+  transition:left 0.5s;
+}
+.btn-submit:hover::after{left:120%;}
+.btn-submit:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,212,255,0.45);}
+.btn-submit:active{transform:translateY(0);}
+
+/* MESSAGE */
 #loginMsg{
-  margin-top:10px;
-  font-weight:bold;
+  margin-top:14px;padding:12px;border-radius:10px;
+  font-size:13px;font-weight:600;text-align:center;
+  display:none;
 }
+#loginMsg.success{background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.3);color:#34d399;}
+#loginMsg.error{background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);color:#f87171;}
+#loginMsg.loading{background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);color:#67e8f9;}
+
+/* LINKS */
+.card-footer{margin-top:24px;text-align:center;display:flex;flex-direction:column;gap:10px;}
+.card-footer a{font-size:14px;color:rgba(255,255,255,0.45);text-decoration:none;transition:color 0.2s;}
+.card-footer a span{color:#00d4ff;font-weight:600;}
+.card-footer a:hover{color:rgba(255,255,255,0.8);}
+
+/* DIVIDER */
+.divider{display:flex;align-items:center;gap:12px;margin:4px 0;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:rgba(255,255,255,0.08);}
+.divider span{font-size:12px;color:rgba(255,255,255,0.25);}
+
+/* BACK */
+.back-link{
+  position:fixed;top:28px;left:28px;z-index:100;
+  padding:10px 16px;border-radius:10px;
+  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);
+  color:rgba(255,255,255,0.6);font-size:13px;font-weight:500;
+  text-decoration:none;backdrop-filter:blur(10px);
+  transition:all 0.2s;display:flex;align-items:center;gap:8px;
+}
+.back-link:hover{background:rgba(255,255,255,0.08);color:white;}
 </style>
 </head>
-
 <body>
 
-<div class="login-box">
-  <h2>Secure Login</h2>
+<canvas id="c"></canvas>
+<div class="grid-bg"></div>
+<a class="back-link" href="index.html">← Home</a>
+
+<div class="card">
+  <div class="logo-mark">🔐</div>
+  <div class="card-title">
+    <h2>Welcome Back</h2>
+    <p>Sign in to your secure vault</p>
+  </div>
 
   <form id="loginForm">
-    <input type="email" id="email" placeholder="Email" required>
-    <input type="password" id="password" placeholder="Password" required>
-    <input type="text" id="otp" placeholder="Google Authenticator OTP">
-    <button type="submit">Login</button>
+    <div class="input-group">
+      <div class="field">
+        <label>Email Address</label>
+        <input type="email" id="email" placeholder="you@example.com" required>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="password" placeholder="••••••••••" required>
+      </div>
+      <div class="field">
+        <label>Authenticator OTP <span class="otp-note">(optional)</span></label>
+        <input type="text" id="otp" placeholder="6-digit code" maxlength="6">
+      </div>
+      <button class="btn-submit" type="submit">Sign In Securely</button>
+    </div>
   </form>
 
   <div id="loginMsg"></div>
 
-  <a class="link" href="forgot.html">Forgot Password?</a>
-  <p>New user? <a class="link" href="register.html">Register here</a></p>
+  <div class="card-footer">
+    <div class="divider"><span>or</span></div>
+    <a href="forgot.html">Forgot password? <span>Reset it</span></a>
+    <a href="register.html">No account? <span>Create one free</span></a>
+  </div>
 </div>
 
 <script>
+// Mini particles
+const canvas=document.getElementById('c'),ctx=canvas.getContext('2d');
+let W,H,ps=[];
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
+resize();window.addEventListener('resize',resize);
+for(let i=0;i<60;i++)ps.push({x:Math.random()*1920,y:Math.random()*1080,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,r:Math.random()+.3,a:Math.random()*.4+.05,c:Math.random()>.5?'0,212,255':'124,58,237'});
+(function loop(){ctx.clearRect(0,0,W,H);ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=`rgba(${p.c},${p.a})`;ctx.fill();});requestAnimationFrame(loop);})();
+
+// Form
 document.getElementById("loginForm").addEventListener("submit", async function(e){
   e.preventDefault();
+  const email=document.getElementById("email").value;
+  const password=document.getElementById("password").value;
+  const otp=document.getElementById("otp").value;
+  const msg=document.getElementById("loginMsg");
 
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  const otp = document.getElementById("otp").value;
-  const msg = document.getElementById("loginMsg");
-
-  msg.style.color="black";
-  msg.innerText="Checking credentials...";
+  msg.className='loading';msg.style.display='block';
+  msg.innerText='Verifying credentials...';
 
   try{
-    const res = await fetch("/api/auth/login",{
+    const res=await fetch("/api/auth/login",{
       method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify({ email,password,otp })
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({email,password,otp})
     });
-
-    const data = await res.json();
-
-    if(res.status === 200 && data.token){
-      localStorage.setItem("token", data.token);
-
-      msg.style.color="green";
-      msg.innerText="Login successful";
-
-      setTimeout(()=>{
-        window.location.href="dashboard.html";
-      },800);
-
+    const data=await res.json();
+    if(res.status===200&&data.token){
+      localStorage.setItem("token",data.token);
+      msg.className='success';msg.innerText='✓ Login successful — redirecting...';
+      setTimeout(()=>window.location.href="dashboard.html",800);
     }else{
-      msg.style.color="red";
-      msg.innerText=data.message || "Invalid email or password";
+      msg.className='error';msg.innerText=data.message||"Invalid email or password";
     }
-
   }catch(err){
-    msg.style.color="red";
-    msg.innerText="Server error";
+    msg.className='error';msg.innerText="Server error. Please try again.";
   }
 });
 </script>
-
 </body>
 </html>

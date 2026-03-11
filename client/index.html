@@ -4,236 +4,428 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Blockchain Cloud Storage</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:'Poppins',sans-serif;
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+
+:root{
+  --neon:#00d4ff;
+  --neon2:#7c3aed;
+  --neon3:#06b6d4;
+  --bg:#020817;
 }
 
-body{
-    background: radial-gradient(circle at top, #08142e, #020617);
-    color:white;
+body{background:var(--bg);color:white;overflow-x:hidden;min-height:100vh;}
+
+/* CANVAS PARTICLES */
+#particles{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
+
+/* GRID LINES */
+.grid-bg{
+  position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;
+  background-image:
+    linear-gradient(rgba(0,212,255,0.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,212,255,0.04) 1px,transparent 1px);
+  background-size:60px 60px;
+  pointer-events:none;
 }
 
 /* NAVBAR */
-
 nav{
-    width:90%;
-    margin:auto;
-    margin-top:20px;
-    padding:15px 30px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    background:rgba(255,255,255,0.05);
-    backdrop-filter: blur(12px);
-    border-radius:14px;
+  position:fixed;top:20px;left:50%;transform:translateX(-50%);
+  width:92%;z-index:100;
+  padding:14px 32px;
+  display:flex;justify-content:space-between;align-items:center;
+  background:rgba(255,255,255,0.04);
+  backdrop-filter:blur(20px);
+  border:1px solid rgba(0,212,255,0.15);
+  border-radius:16px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.08);
 }
 
-.logo{
-    font-weight:600;
-    font-size:20px;
-}
-
+.logo{font-weight:800;font-size:20px;letter-spacing:-0.5px;}
 .logo span{
-    color:#4da3ff;
+  background:linear-gradient(90deg,var(--neon),var(--neon2));
+  background-clip:text;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
 }
 
-.nav-right{
-    display:flex;
-    align-items:center;
-    gap:18px;
-}
+.nav-links{display:flex;align-items:center;gap:8px;}
 
-.nav-right div{
-    cursor:pointer;
-    opacity:0.85;
+.nav-links a{
+  padding:8px 18px;border-radius:10px;
+  color:rgba(255,255,255,0.75);
+  text-decoration:none;font-size:14px;font-weight:500;
+  transition:all 0.2s;
 }
+.nav-links a:hover{background:rgba(255,255,255,0.08);color:white;}
 
-.signup{
-    padding:8px 18px;
-    border-radius:8px;
-    background:linear-gradient(90deg,#2aa9ff,#0066ff);
-    border:none;
-    color:white;
-    cursor:pointer;
-    box-shadow:0 0 12px rgba(0,153,255,0.5);
+.btn-primary{
+  padding:9px 22px;border-radius:10px;border:none;cursor:pointer;
+  background:linear-gradient(135deg,var(--neon),var(--neon2));
+  color:white;font-size:14px;font-weight:600;
+  box-shadow:0 0 24px rgba(0,212,255,0.35);
+  transition:all 0.3s;
+  text-decoration:none;display:inline-block;
 }
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 0 36px rgba(0,212,255,0.55);}
 
 /* HERO */
-
 .hero{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    width:90%;
-    margin:80px auto;
-    gap:40px;
+  position:relative;z-index:1;
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  padding-top:100px;
+  text-align:center;
 }
 
-.hero-text{
-    max-width:520px;
+.hero-inner{max-width:900px;margin:auto;padding:0 24px;}
+
+.badge{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:6px 16px;border-radius:100px;
+  background:rgba(0,212,255,0.1);
+  border:1px solid rgba(0,212,255,0.25);
+  font-size:12px;font-weight:600;color:var(--neon);
+  letter-spacing:1.5px;text-transform:uppercase;
+  margin-bottom:28px;
+  animation:fadeSlideDown 0.8s ease forwards;
 }
 
-.hero-text small{
-    letter-spacing:1px;
-    opacity:0.7;
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--neon);box-shadow:0 0 8px var(--neon);animation:pulse 2s infinite;}
+
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+
+h1{
+  font-size:clamp(44px,8vw,88px);
+  font-weight:900;line-height:1.0;
+  letter-spacing:-3px;
+  animation:fadeSlideDown 0.9s ease forwards;opacity:0;animation-delay:0.1s;
 }
 
-.hero-text h1{
-    font-size:56px;
-    line-height:1.1;
-    margin:15px 0;
+h1 .grad{
+  background:linear-gradient(135deg,#ffffff 0%,var(--neon) 50%,var(--neon2) 100%);
+  background-clip:text;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
 }
 
-.hero-text span{
-    color:#7cc7ff;
+.hero-sub{
+  margin-top:24px;font-size:18px;line-height:1.7;
+  color:rgba(255,255,255,0.55);max-width:580px;margin:24px auto 0;
+  animation:fadeSlideDown 1s ease forwards;opacity:0;animation-delay:0.2s;
 }
 
-.hero-text p{
-    opacity:0.7;
-    margin-top:25px;
-    line-height:1.6;
+.hero-cta{
+  margin-top:40px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap;
+  animation:fadeSlideDown 1.1s ease forwards;opacity:0;animation-delay:0.3s;
 }
 
-/* CLOUD SVG */
+.btn-outline{
+  padding:13px 28px;border-radius:12px;border:1px solid rgba(255,255,255,0.15);
+  color:rgba(255,255,255,0.8);background:rgba(255,255,255,0.04);
+  font-size:15px;font-weight:500;cursor:pointer;
+  text-decoration:none;display:inline-block;
+  transition:all 0.3s;backdrop-filter:blur(10px);
+}
+.btn-outline:hover{border-color:rgba(0,212,255,0.4);background:rgba(0,212,255,0.06);color:white;}
 
-.scene{
-    display:flex;
-    justify-content:center;
-    align-items:center;
+.btn-lg{padding:14px 36px;font-size:16px;border-radius:14px;}
+
+/* 3D CUBE */
+.scene-3d{
+  position:relative;z-index:1;
+  display:flex;justify-content:center;align-items:center;
+  margin:30px auto 0;
+  perspective:800px;
 }
 
-.cloud-svg{
-    width:300px;
-    animation: float 5s ease-in-out infinite;
+.cube-wrapper{
+  width:180px;height:180px;
+  position:relative;
+  transform-style:preserve-3d;
+  animation:rotateCube 12s linear infinite;
 }
 
-/* floating animation */
-@keyframes float{
-    0%,100%{ transform: translateY(0); }
-    50%{ transform: translateY(-14px); }
+@keyframes rotateCube{
+  0%{transform:rotateX(20deg) rotateY(0deg);}
+  100%{transform:rotateX(20deg) rotateY(360deg);}
 }
 
-/* arrow animation */
-.arrow{
-    animation: arrowMove 2s infinite ease-in-out;
+.cube-face{
+  position:absolute;width:180px;height:180px;
+  border:1px solid rgba(0,212,255,0.4);
+  background:rgba(0,212,255,0.04);
+  backdrop-filter:blur(10px);
+  display:flex;align-items:center;justify-content:center;
 }
 
-.arrow.down{
-    animation-delay: 1s;
+.cube-face svg{width:64px;height:64px;opacity:0.6;}
+
+.front {transform:translateZ(90px);}
+.back  {transform:translateZ(-90px) rotateY(180deg);}
+.right {transform:rotateY(90deg) translateZ(90px);}
+.left  {transform:rotateY(-90deg) translateZ(90px);}
+.top   {transform:rotateX(90deg) translateZ(90px);}
+.bottom{transform:rotateX(-90deg) translateZ(90px);}
+
+.cube-glow{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:300px;height:300px;border-radius:50%;
+  background:radial-gradient(circle,rgba(0,212,255,0.15) 0%,transparent 70%);
+  pointer-events:none;
 }
 
-@keyframes arrowMove{
-    0%{ transform: translateY(0); opacity:0.4; }
-    50%{ transform: translateY(-10px); opacity:1; }
-    100%{ transform: translateY(0); opacity:0.4; }
+/* FEATURES */
+.features{
+  position:relative;z-index:1;
+  max-width:1100px;margin:80px auto 0;
+  padding:0 24px 80px;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:20px;
 }
 
-/* data flow dots */
-.dot{
-    opacity:0;
-    animation: dataFlow 2s infinite;
+.feature-card{
+  padding:28px;border-radius:20px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.07);
+  backdrop-filter:blur(10px);
+  transition:all 0.4s;
+  position:relative;overflow:hidden;
 }
 
-.dot.delay1{ animation-delay:0.4s; }
-.dot.delay2{ animation-delay:0.8s; }
-
-@keyframes dataFlow{
-    0%{ opacity:0; transform: translateY(10px);}
-    50%{ opacity:1;}
-    100%{ opacity:0; transform: translateY(-20px);}
+.feature-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,212,255,0.5),transparent);
+  opacity:0;transition:opacity 0.4s;
 }
 
-/* MOBILE */
+.feature-card:hover{
+  transform:translateY(-6px);
+  border-color:rgba(0,212,255,0.2);
+  background:rgba(0,212,255,0.04);
+  box-shadow:0 20px 60px rgba(0,0,0,0.4),0 0 30px rgba(0,212,255,0.1);
+}
+.feature-card:hover::before{opacity:1;}
 
-@media(max-width:900px){
-.hero{
-    flex-direction:column;
-    text-align:center;
+.feature-icon{
+  width:52px;height:52px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:18px;font-size:24px;
 }
-.cloud-svg{
-    width:220px;
+
+.feat1 .feature-icon{background:linear-gradient(135deg,rgba(0,212,255,0.2),rgba(0,212,255,0.05));border:1px solid rgba(0,212,255,0.3);}
+.feat2 .feature-icon{background:linear-gradient(135deg,rgba(124,58,237,0.2),rgba(124,58,237,0.05));border:1px solid rgba(124,58,237,0.3);}
+.feat3 .feature-icon{background:linear-gradient(135deg,rgba(16,185,129,0.2),rgba(16,185,129,0.05));border:1px solid rgba(16,185,129,0.3);}
+.feat4 .feature-icon{background:linear-gradient(135deg,rgba(245,158,11,0.2),rgba(245,158,11,0.05));border:1px solid rgba(245,158,11,0.3);}
+.feat5 .feature-icon{background:linear-gradient(135deg,rgba(239,68,68,0.2),rgba(239,68,68,0.05));border:1px solid rgba(239,68,68,0.3);}
+.feat6 .feature-icon{background:linear-gradient(135deg,rgba(6,182,212,0.2),rgba(6,182,212,0.05));border:1px solid rgba(6,182,212,0.3);}
+
+.feature-card h3{font-size:17px;font-weight:700;margin-bottom:10px;}
+.feature-card p{font-size:14px;color:rgba(255,255,255,0.5);line-height:1.6;}
+
+/* STATS */
+.stats{
+  position:relative;z-index:1;
+  max-width:900px;margin:0 auto;
+  padding:0 24px 80px;
+  display:grid;grid-template-columns:repeat(3,1fr);gap:20px;
+  text-align:center;
 }
+
+.stat-card{
+  padding:32px 20px;border-radius:20px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.07);
+}
+
+.stat-num{
+  font-size:42px;font-weight:900;letter-spacing:-2px;
+  background:linear-gradient(135deg,var(--neon),var(--neon2));
+  background-clip:text;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+
+.stat-label{font-size:13px;color:rgba(255,255,255,0.4);margin-top:6px;font-weight:500;}
+
+/* ANIMATIONS */
+@keyframes fadeSlideDown{
+  from{opacity:0;transform:translateY(30px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+@media(max-width:768px){
+  .cube-wrapper{width:120px;height:120px;}
+  .cube-face{width:120px;height:120px;}
+  .front {transform:translateZ(60px);}
+  .back  {transform:translateZ(-60px) rotateY(180deg);}
+  .right {transform:rotateY(90deg) translateZ(60px);}
+  .left  {transform:rotateY(-90deg) translateZ(60px);}
+  .top   {transform:rotateX(90deg) translateZ(60px);}
+  .bottom{transform:rotateX(-90deg) translateZ(60px);}
+  .stats{grid-template-columns:1fr;}
 }
 </style>
 </head>
 <body>
 
+<canvas id="particles"></canvas>
+<div class="grid-bg"></div>
+
+<!-- NAVBAR -->
 <nav>
-    <div class="logo">Blockchain <span>Cloud</span> Storage</div>
-    <div class="nav-right">
-        <div onclick="location.href='login.html'">Login</div>
-        <button class="signup" onclick="location.href='register.html'">Sign Up</button>
-    </div>
+  <div class="logo">Block<span>Chain Cloud</span> Storage</div>
+  <div class="nav-links">
+    <a href="login.html">Login</a>
+    <a class="btn-primary" href="register.html">Get Started</a>
+  </div>
 </nav>
 
+<!-- HERO -->
 <section class="hero">
-
-    <div class="hero-text">
-        <small>ALL IN ONE CLOUD</small>
-        <h1>Secure <span>Cloud</span><br>Storage<br>for All Your Files</h1>
-        <p>Documents, photos, videos and more — keep all your files and folders safe in online cloud storage.</p>
+  <div class="hero-inner">
+    <div class="badge"><span class="badge-dot"></span>Blockchain Powered · Zero Trust</div>
+    <h1><span class="grad">Secure Cloud</span><br>Storage</h1>
+    <p class="hero-sub">AES-256 encrypted files stored on IPFS with blockchain hash verification. Your data, truly yours.</p>
+    <div class="hero-cta">
     </div>
 
-    <div class="scene">
-        <svg class="cloud-svg" viewBox="0 0 512 512">
-
-            <defs>
-                <linearGradient id="cloudGrad" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stop-color="#d9f2ff"/>
-                    <stop offset="100%" stop-color="#9ad8ff"/>
-                </linearGradient>
-
-                <linearGradient id="arrowGrad" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stop-color="#2aa9ff"/>
-                    <stop offset="100%" stop-color="#005eff"/>
-                </linearGradient>
-
-                <filter id="glow">
-                    <feDropShadow dx="0" dy="0" stdDeviation="10" flood-color="#00aaff"/>
-                </filter>
-            </defs>
-
-            <!-- cloud -->
-            <path
-              d="M380 300H150a90 90 0 1 1 20-177 120 120 0 0 1 230 37 75 75 0 0 1 -20 140z"
-              fill="url(#cloudGrad)"
-              filter="url(#glow)"
-            />
-
-            <!-- up arrow -->
-            <path class="arrow up"
-              d="M240 210 L240 290 M240 210 L210 240 M240 210 L270 240"
-              stroke="url(#arrowGrad)"
-              stroke-width="14"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              fill="none"/>
-
-            <!-- down arrow -->
-            <path class="arrow down"
-              d="M290 270 L290 350 M290 350 L260 320 M290 350 L320 320"
-              stroke="url(#arrowGrad)"
-              stroke-width="14"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              fill="none"/>
-
-            <!-- data flow dots -->
-            <circle class="dot" cx="210" cy="320" r="6" fill="#2aa9ff"/>
-            <circle class="dot delay1" cx="240" cy="350" r="6" fill="#2aa9ff"/>
-            <circle class="dot delay2" cx="270" cy="380" r="6" fill="#2aa9ff"/>
-
-        </svg>
+    <!-- 3D CUBE -->
+    <div class="scene-3d">
+      <div class="cube-glow"></div>
+      <div class="cube-wrapper">
+        <!-- front -->
+        <div class="cube-face front">
+          <svg viewBox="0 0 64 64" fill="none"><path d="M32 8L8 20v24l24 12 24-12V20L32 8z" stroke="#00d4ff" stroke-width="2" fill="rgba(0,212,255,0.1)"/><path d="M32 8v36M8 20l24 12 24-12" stroke="#00d4ff" stroke-width="1.5"/></svg>
+        </div>
+        <!-- back -->
+        <div class="cube-face back">
+          <svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="18" stroke="#7c3aed" stroke-width="2" fill="rgba(124,58,237,0.1)"/><circle cx="32" cy="32" r="8" stroke="#7c3aed" stroke-width="1.5"/><path d="M32 14v4M32 46v4M14 32h4M46 32h4" stroke="#7c3aed" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <!-- right -->
+        <div class="cube-face right">
+          <svg viewBox="0 0 64 64" fill="none"><rect x="12" y="22" width="40" height="28" rx="4" stroke="#06b6d4" stroke-width="2" fill="rgba(6,182,212,0.1)"/><path d="M22 22v-6a10 10 0 0120 0v6" stroke="#06b6d4" stroke-width="2"/><circle cx="32" cy="36" r="4" fill="#06b6d4"/></svg>
+        </div>
+        <!-- left -->
+        <div class="cube-face left">
+          <svg viewBox="0 0 64 64" fill="none"><path d="M16 44l16-28 16 28H16z" stroke="#00d4ff" stroke-width="2" fill="rgba(0,212,255,0.1)"/><path d="M32 16v16M32 38v2" stroke="#00d4ff" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <!-- top -->
+        <div class="cube-face top">
+          <svg viewBox="0 0 64 64" fill="none"><path d="M32 12c-11 0-20 9-20 20s9 20 20 20 20-9 20-20S43 12 32 12z" stroke="#7c3aed" stroke-width="2" fill="rgba(124,58,237,0.1)"/><path d="M24 32l6 6 10-12" stroke="#7c3aed" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <!-- bottom -->
+        <div class="cube-face bottom">
+          <svg viewBox="0 0 64 64" fill="none"><path d="M32 20v24M20 28l12 16 12-16" stroke="#06b6d4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
     </div>
-
+  </div>
 </section>
 
+<!-- STATS -->
+<div class="stats">
+  <div class="stat-card"><div class="stat-num">256</div><div class="stat-label">Bit AES Encryption</div></div>
+  <div class="stat-card"><div class="stat-num">100%</div><div class="stat-label">Decentralized Storage</div></div>
+  <div class="stat-card"><div class="stat-num">0</div><div class="stat-label">Single Point of Failure</div></div>
+</div>
+
+<!-- FEATURES -->
+<div class="features">
+  <div class="feature-card feat1">
+    <div class="feature-icon">🔐</div>
+    <h3>AES-256 Encryption</h3>
+    <p>Every file is encrypted client-side before it ever leaves your device. Military-grade security.</p>
+  </div>
+  <div class="feature-card feat2">
+    <div class="feature-icon">⛓️</div>
+    <h3>Blockchain Verified</h3>
+    <p>File hashes are recorded on Ethereum smart contracts, making tampering cryptographically impossible.</p>
+  </div>
+  <div class="feature-card feat3">
+    <div class="feature-icon">🌐</div>
+    <h3>IPFS Distributed</h3>
+    <p>Files live on the InterPlanetary File System — no central server to shut down or compromise.</p>
+  </div>
+  <div class="feature-card feat4">
+    <div class="feature-icon">🔑</div>
+    <h3>Multi-Factor Auth</h3>
+    <p>Google Authenticator TOTP adds a second layer of protection beyond your password.</p>
+  </div>
+  <div class="feature-card feat5">
+    <div class="feature-icon">📊</div>
+    <h3>Download Tracking</h3>
+    <p>Know exactly how many times each file has been accessed, with full audit trail on chain.</p>
+  </div>
+  <div class="feature-card feat6">
+    <div class="feature-icon">⚡</div>
+    <h3>Instant Access</h3>
+    <p>Upload, preview and download any file format instantly. Images, PDFs, documents and more.</p>
+  </div>
+</div>
+
+<script>
+// Particle system
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let W, H, particles = [];
+
+function resize(){
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+class Particle {
+  constructor(){this.reset();}
+  reset(){
+    this.x = Math.random()*W;
+    this.y = Math.random()*H;
+    this.vx = (Math.random()-0.5)*0.4;
+    this.vy = (Math.random()-0.5)*0.4;
+    this.alpha = Math.random()*0.5+0.1;
+    this.r = Math.random()*1.5+0.5;
+    this.color = Math.random()>0.5?'0,212,255':'124,58,237';
+  }
+  update(){
+    this.x+=this.vx; this.y+=this.vy;
+    if(this.x<0||this.x>W||this.y<0||this.y>H) this.reset();
+  }
+  draw(){
+    ctx.beginPath();
+    ctx.arc(this.x,this.y,this.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(${this.color},${this.alpha})`;
+    ctx.fill();
+  }
+}
+
+for(let i=0;i<120;i++) particles.push(new Particle());
+
+// Draw connections
+function drawConnections(){
+  for(let i=0;i<particles.length;i++){
+    for(let j=i+1;j<particles.length;j++){
+      const dx=particles[i].x-particles[j].x;
+      const dy=particles[i].y-particles[j].y;
+      const dist=Math.sqrt(dx*dx+dy*dy);
+      if(dist<120){
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x,particles[i].y);
+        ctx.lineTo(particles[j].x,particles[j].y);
+        ctx.strokeStyle=`rgba(0,212,255,${0.06*(1-dist/120)})`;
+        ctx.lineWidth=0.5;
+        ctx.stroke();
+      }
+    }
+  }
+}
+
+function animate(){
+  ctx.clearRect(0,0,W,H);
+  drawConnections();
+  particles.forEach(p=>{p.update();p.draw();});
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
 </body>
 </html>

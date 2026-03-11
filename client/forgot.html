@@ -1,62 +1,159 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Reset Password</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Forgot Password — BlockChain Storage</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+body{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:#020817;color:white;overflow:hidden;
+  background-image:
+    radial-gradient(ellipse 70% 60% at 50% 0%,rgba(16,185,129,0.1) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 50% at 80% 100%,rgba(0,212,255,0.08) 0%,transparent 60%);
+}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
+.grid-bg{
+  position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;
+  background-image:
+    linear-gradient(rgba(16,185,129,0.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(16,185,129,0.03) 1px,transparent 1px);
+  background-size:60px 60px;pointer-events:none;
+}
+
+.card{
+  position:relative;z-index:10;width:420px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:24px;padding:44px 40px;
+  backdrop-filter:blur(24px);
+  box-shadow:0 32px 80px rgba(0,0,0,0.6),0 0 0 1px rgba(255,255,255,0.04) inset,0 1px 0 rgba(255,255,255,0.1) inset;
+  animation:cardIn 0.7s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+@keyframes cardIn{from{opacity:0;transform:translateY(40px) scale(0.96);}to{opacity:1;transform:translateY(0) scale(1);}}
+.card::before{
+  content:'';position:absolute;top:0;left:10%;right:10%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(16,185,129,0.6),transparent);
+  border-radius:100px;
+}
+
+.logo-mark{
+  width:52px;height:52px;border-radius:14px;
+  background:linear-gradient(135deg,rgba(16,185,129,0.2),rgba(0,212,255,0.1));
+  border:1px solid rgba(16,185,129,0.3);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 20px;font-size:24px;
+}
+.card-title{text-align:center;margin-bottom:4px;}
+.card-title h2{font-size:24px;font-weight:800;letter-spacing:-0.5px;}
+.card-title p{font-size:14px;color:rgba(255,255,255,0.4);margin-top:8px;line-height:1.6;}
+
+.input-group{margin-top:28px;display:flex;flex-direction:column;gap:14px;}
+.field{display:flex;flex-direction:column;gap:6px;}
+.field label{font-size:12px;font-weight:600;color:rgba(255,255,255,0.5);letter-spacing:0.5px;text-transform:uppercase;}
+.field input{
+  padding:13px 16px;
+  background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);
+  border-radius:12px;color:white;font-size:15px;transition:all 0.3s;outline:none;
+  -webkit-text-fill-color:white;
+}
+.field input::placeholder{color:rgba(255,255,255,0.25);}
+.field input:focus{border-color:rgba(16,185,129,0.5);background:rgba(16,185,129,0.06);box-shadow:0 0 0 3px rgba(16,185,129,0.1);}
+
+.btn-submit{
+  width:100%;padding:14px;margin-top:4px;border:none;cursor:pointer;
+  background:linear-gradient(135deg,#10b981,#00d4ff);
+  color:white;font-size:15px;font-weight:700;border-radius:12px;
+  box-shadow:0 4px 24px rgba(16,185,129,0.3);transition:all 0.3s;
+  position:relative;overflow:hidden;
+}
+.btn-submit::after{
+  content:'';position:absolute;top:-50%;left:-60%;width:200%;height:200%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent);
+  transform:skewX(-20deg);transition:left 0.5s;
+}
+.btn-submit:hover::after{left:120%;}
+.btn-submit:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(16,185,129,0.45);}
+
+#msg{
+  margin-top:14px;padding:12px;border-radius:10px;
+  font-size:13px;font-weight:600;text-align:center;display:none;
+}
+#msg.success{background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.3);color:#34d399;}
+#msg.error{background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);color:#f87171;}
+#msg.loading{background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);color:#6ee7b7;}
+
+.card-footer{margin-top:24px;text-align:center;}
+.card-footer a{font-size:14px;color:rgba(255,255,255,0.4);text-decoration:none;transition:color 0.2s;}
+.card-footer a span{color:#10b981;font-weight:600;}
+.card-footer a:hover{color:rgba(255,255,255,0.7);}
+
+.back-link{
+  position:fixed;top:28px;left:28px;z-index:100;
+  padding:10px 16px;border-radius:10px;
+  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);
+  color:rgba(255,255,255,0.6);font-size:13px;font-weight:500;
+  text-decoration:none;backdrop-filter:blur(10px);transition:all 0.2s;
+}
+.back-link:hover{background:rgba(255,255,255,0.08);color:white;}
+</style>
 </head>
-<body style="font-family:Arial;text-align:center;margin-top:100px">
+<body>
+<canvas id="c"></canvas>
+<div class="grid-bg"></div>
+<a class="back-link" href="login.html">← Back to Login</a>
 
-<h2>Reset Password</h2>
+<div class="card">
+  <div class="logo-mark">📧</div>
+  <div class="card-title">
+    <h2>Reset Password</h2>
+    <p>Enter your email and we'll send a one-time password to reset your account.</p>
+  </div>
 
-<input id="email" placeholder="Enter email" type="email">
-<br><br>
-<button onclick="sendReset()">Send OTP</button>
+  <div class="input-group">
+    <div class="field">
+      <label>Email Address</label>
+      <input id="email" type="email" placeholder="you@example.com">
+    </div>
+    <button class="btn-submit" onclick="sendReset()">Send Reset OTP</button>
+  </div>
 
-<p id="msg" style="margin-top:15px;font-weight:bold;"></p>
+  <div id="msg"></div>
+
+  <div class="card-footer">
+    <a href="login.html">Remember it? <span>Back to Login</span></a>
+  </div>
+</div>
 
 <script>
-async function sendReset() {
-  const email = document.getElementById("email").value.trim();
-  const msg = document.getElementById("msg");
+const canvas=document.getElementById('c'),ctx=canvas.getContext('2d');
+let W,H,ps=[];
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
+resize();window.addEventListener('resize',resize);
+for(let i=0;i<60;i++)ps.push({x:Math.random()*1920,y:Math.random()*1080,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,r:Math.random()+.3,a:Math.random()*.35+.05,c:Math.random()>.5?'16,185,129':'0,212,255'});
+(function loop(){ctx.clearRect(0,0,W,H);ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=`rgba(${p.c},${p.a})`;ctx.fill();});requestAnimationFrame(loop);})();
 
-  // ✅ validate email
-  if (!email) {
-    msg.innerText = "Please enter your email";
-    msg.style.color = "red";
-    return;
-  }
-
-  try {
-    const res = await fetch("/api/auth/forgot", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email })
-    });
-
-    const data = await res.json();
-
-    if (res.ok) {
-      msg.innerText = "✅ OTP sent to your email";
-      msg.style.color = "green";
-
-      // ✅ save email for next page
-      localStorage.setItem("resetEmail", email);
-
-      // ✅ redirect to OTP reset page
-      setTimeout(() => {
-        window.location.href = "reset.html";
-      }, 1200);
-
-    } else {
-      msg.innerText = data.message || "Error sending OTP";
-      msg.style.color = "red";
+async function sendReset(){
+  const email=document.getElementById("email").value.trim();
+  const msg=document.getElementById("msg");
+  if(!email){msg.className="error";msg.style.display='block';msg.innerText="Please enter your email";return;}
+  msg.className="loading";msg.style.display='block';msg.innerText="Sending OTP to your email...";
+  try{
+    const res=await fetch("/api/auth/forgot",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email})});
+    const data=await res.json();
+    if(res.ok){
+      msg.className="success";msg.innerText="✓ OTP sent! Check your inbox.";
+      localStorage.setItem("resetEmail",email);
+      setTimeout(()=>window.location.href="reset.html",1500);
+    }else{
+      msg.className="error";msg.innerText=data.message||"Error sending OTP";
     }
-
-  } catch (err) {
-    msg.innerText = "Server error. Try again.";
-    msg.style.color = "red";
+  }catch(err){
+    msg.className="error";msg.innerText="Server error. Please try again.";
   }
 }
 </script>
-
 </body>
 </html>

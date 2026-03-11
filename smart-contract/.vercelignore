@@ -1,0 +1,5 @@
+smart-contract/
+server/node_modules/
+server/uploads/
+server/logs.log
+server
