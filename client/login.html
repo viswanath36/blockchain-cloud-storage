@@ -88,9 +88,6 @@ canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-even
   box-shadow:0 0 0 3px rgba(0,212,255,0.1);
 }
 
-/* OTP optional */
-.otp-note{font-size:11px;color:rgba(255,255,255,0.3);margin-top:2px;}
-
 /* BUTTON */
 .btn-submit{
   width:100%;padding:14px;margin-top:8px;border:none;cursor:pointer;
@@ -168,7 +165,7 @@ canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-even
         <input type="password" id="password" placeholder="••••••••••" required>
       </div>
       <div class="field">
-        <label>Authenticator OTP <span class="otp-note">(optional)</span></label>
+        <label>Authenticator OTP <span class="otp-note"></span></label>
         <input type="text" id="otp" placeholder="6-digit code" maxlength="6">
       </div>
       <button class="btn-submit" type="submit">Sign In Securely</button>
