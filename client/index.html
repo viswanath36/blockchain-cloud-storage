@@ -9,13 +9,13 @@
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
 
 :root{
-  --neon:#00d4ff;
+  --neon:#00aaff;
   --neon2:#7c3aed;
   --neon3:#06b6d4;
-  --bg:#020817;
+  --bg:#ffffff;
 }
 
-body{background:var(--bg);color:white;overflow-x:hidden;min-height:100vh;}
+body{background:#f7f9fc;color:#1a1a1a;overflow-x:hidden;min-height:100vh;}
 
 /* CANVAS PARTICLES */
 #particles{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
@@ -24,8 +24,8 @@ body{background:var(--bg);color:white;overflow-x:hidden;min-height:100vh;}
 .grid-bg{
   position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;
   background-image:
-    linear-gradient(rgba(0,212,255,0.04) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(0,212,255,0.04) 1px,transparent 1px);
+    linear-gradient(rgba(0,0,0,0.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,0,0,0.03) 1px,transparent 1px);
   background-size:60px 60px;
   pointer-events:none;
 }
@@ -36,14 +36,14 @@ nav{
   width:92%;z-index:100;
   padding:14px 32px;
   display:flex;justify-content:space-between;align-items:center;
-  background:rgba(255,255,255,0.04);
+  background:#ffffff;
   backdrop-filter:blur(20px);
-  border:1px solid rgba(0,212,255,0.15);
+  border:1px solid #e5e5e5;
   border-radius:16px;
-  box-shadow:0 8px 32px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.08);
+  box-shadow:0 8px 32px rgba(0,0,0,0.08);
 }
 
-.logo{font-weight:800;font-size:20px;letter-spacing:-0.5px;}
+.logo{font-weight:800;font-size:20px;letter-spacing:-0.5px;color:#111;}
 .logo span{
   background:linear-gradient(90deg,var(--neon),var(--neon2));
   background-clip:text;
@@ -54,21 +54,21 @@ nav{
 
 .nav-links a{
   padding:8px 18px;border-radius:10px;
-  color:rgba(255,255,255,0.75);
+  color:#555;
   text-decoration:none;font-size:14px;font-weight:500;
   transition:all 0.2s;
 }
-.nav-links a:hover{background:rgba(255,255,255,0.08);color:white;}
+.nav-links a:hover{background:#f0f0f0;color:#000;}
 
 .btn-primary{
   padding:9px 22px;border-radius:10px;border:none;cursor:pointer;
   background:linear-gradient(135deg,var(--neon),var(--neon2));
   color:white;font-size:14px;font-weight:600;
-  box-shadow:0 0 24px rgba(0,212,255,0.35);
+  box-shadow:0 0 24px rgba(0,170,255,0.25);
   transition:all 0.3s;
   text-decoration:none;display:inline-block;
 }
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 0 36px rgba(0,212,255,0.55);}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 0 36px rgba(0,170,255,0.35);}
 
 /* HERO */
 .hero{
@@ -83,15 +83,15 @@ nav{
 .badge{
   display:inline-flex;align-items:center;gap:8px;
   padding:6px 16px;border-radius:100px;
-  background:rgba(0,212,255,0.1);
-  border:1px solid rgba(0,212,255,0.25);
+  background:#e6f7ff;
+  border:1px solid #cceeff;
   font-size:12px;font-weight:600;color:var(--neon);
   letter-spacing:1.5px;text-transform:uppercase;
   margin-bottom:28px;
   animation:fadeSlideDown 0.8s ease forwards;
 }
 
-.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--neon);box-shadow:0 0 8px var(--neon);animation:pulse 2s infinite;}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--neon);box-shadow:0 0 6px var(--neon);animation:pulse 2s infinite;}
 
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
 
@@ -100,17 +100,18 @@ h1{
   font-weight:900;line-height:1.0;
   letter-spacing:-3px;
   animation:fadeSlideDown 0.9s ease forwards;opacity:0;animation-delay:0.1s;
+  color:#111;
 }
 
 h1 .grad{
-  background:linear-gradient(135deg,#ffffff 0%,var(--neon) 50%,var(--neon2) 100%);
+  background:linear-gradient(135deg,#000000 0%,var(--neon) 50%,var(--neon2) 100%);
   background-clip:text;
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;
 }
 
 .hero-sub{
   margin-top:24px;font-size:18px;line-height:1.7;
-  color:rgba(255,255,255,0.55);max-width:580px;margin:24px auto 0;
+  color:#555;max-width:580px;margin:24px auto 0;
   animation:fadeSlideDown 1s ease forwards;opacity:0;animation-delay:0.2s;
 }
 
@@ -120,13 +121,13 @@ h1 .grad{
 }
 
 .btn-outline{
-  padding:13px 28px;border-radius:12px;border:1px solid rgba(255,255,255,0.15);
-  color:rgba(255,255,255,0.8);background:rgba(255,255,255,0.04);
+  padding:13px 28px;border-radius:12px;border:1px solid #ddd;
+  color:#333;background:#ffffff;
   font-size:15px;font-weight:500;cursor:pointer;
   text-decoration:none;display:inline-block;
   transition:all 0.3s;backdrop-filter:blur(10px);
 }
-.btn-outline:hover{border-color:rgba(0,212,255,0.4);background:rgba(0,212,255,0.06);color:white;}
+.btn-outline:hover{border-color:#00aaff;background:#f0faff;color:#000;}
 
 .btn-lg{padding:14px 36px;font-size:16px;border-radius:14px;}
 
@@ -152,8 +153,8 @@ h1 .grad{
 
 .cube-face{
   position:absolute;width:180px;height:180px;
-  border:1px solid rgba(0,212,255,0.4);
-  background:rgba(0,212,255,0.04);
+  border:1px solid #cceeff;
+  background:#f9fcff;
   backdrop-filter:blur(10px);
   display:flex;align-items:center;justify-content:center;
 }
@@ -170,7 +171,7 @@ h1 .grad{
 .cube-glow{
   position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
   width:300px;height:300px;border-radius:50%;
-  background:radial-gradient(circle,rgba(0,212,255,0.15) 0%,transparent 70%);
+  background:radial-gradient(circle,rgba(0,170,255,0.15) 0%,transparent 70%);
   pointer-events:none;
 }
 
@@ -185,8 +186,8 @@ h1 .grad{
 
 .feature-card{
   padding:28px;border-radius:20px;
-  background:rgba(255,255,255,0.03);
-  border:1px solid rgba(255,255,255,0.07);
+  background:#ffffff;
+  border:1px solid #e5e5e5;
   backdrop-filter:blur(10px);
   transition:all 0.4s;
   position:relative;overflow:hidden;
@@ -194,15 +195,15 @@ h1 .grad{
 
 .feature-card::before{
   content:'';position:absolute;top:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(0,212,255,0.5),transparent);
+  background:linear-gradient(90deg,transparent,rgba(0,170,255,0.5),transparent);
   opacity:0;transition:opacity 0.4s;
 }
 
 .feature-card:hover{
   transform:translateY(-6px);
-  border-color:rgba(0,212,255,0.2);
-  background:rgba(0,212,255,0.04);
-  box-shadow:0 20px 60px rgba(0,0,0,0.4),0 0 30px rgba(0,212,255,0.1);
+  border-color:#00aaff;
+  background:#f0faff;
+  box-shadow:0 20px 60px rgba(0,0,0,0.08);
 }
 .feature-card:hover::before{opacity:1;}
 
@@ -212,15 +213,15 @@ h1 .grad{
   margin-bottom:18px;font-size:24px;
 }
 
-.feat1 .feature-icon{background:linear-gradient(135deg,rgba(0,212,255,0.2),rgba(0,212,255,0.05));border:1px solid rgba(0,212,255,0.3);}
-.feat2 .feature-icon{background:linear-gradient(135deg,rgba(124,58,237,0.2),rgba(124,58,237,0.05));border:1px solid rgba(124,58,237,0.3);}
-.feat3 .feature-icon{background:linear-gradient(135deg,rgba(16,185,129,0.2),rgba(16,185,129,0.05));border:1px solid rgba(16,185,129,0.3);}
-.feat4 .feature-icon{background:linear-gradient(135deg,rgba(245,158,11,0.2),rgba(245,158,11,0.05));border:1px solid rgba(245,158,11,0.3);}
-.feat5 .feature-icon{background:linear-gradient(135deg,rgba(239,68,68,0.2),rgba(239,68,68,0.05));border:1px solid rgba(239,68,68,0.3);}
-.feat6 .feature-icon{background:linear-gradient(135deg,rgba(6,182,212,0.2),rgba(6,182,212,0.05));border:1px solid rgba(6,182,212,0.3);}
+.feat1 .feature-icon{background:#e6f7ff;border:1px solid #cceeff;}
+.feat2 .feature-icon{background:#f3e8ff;border:1px solid #d8b4fe;}
+.feat3 .feature-icon{background:#e6fffa;border:1px solid #99f6e4;}
+.feat4 .feature-icon{background:#fff7ed;border:1px solid #fed7aa;}
+.feat5 .feature-icon{background:#fee2e2;border:1px solid #fecaca;}
+.feat6 .feature-icon{background:#ecfeff;border:1px solid #a5f3fc;}
 
-.feature-card h3{font-size:17px;font-weight:700;margin-bottom:10px;}
-.feature-card p{font-size:14px;color:rgba(255,255,255,0.5);line-height:1.6;}
+.feature-card h3{font-size:17px;font-weight:700;margin-bottom:10px;color:#111;}
+.feature-card p{font-size:14px;color:#555;line-height:1.6;}
 
 /* STATS */
 .stats{
@@ -233,8 +234,8 @@ h1 .grad{
 
 .stat-card{
   padding:32px 20px;border-radius:20px;
-  background:rgba(255,255,255,0.03);
-  border:1px solid rgba(255,255,255,0.07);
+  background:#ffffff;
+  border:1px solid #e5e5e5;
 }
 
 .stat-num{
@@ -244,7 +245,7 @@ h1 .grad{
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;
 }
 
-.stat-label{font-size:13px;color:rgba(255,255,255,0.4);margin-top:6px;font-weight:500;}
+.stat-label{font-size:13px;color:#666;margin-top:6px;font-weight:500;}
 
 /* ANIMATIONS */
 @keyframes fadeSlideDown{
